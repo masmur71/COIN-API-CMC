@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portofolio Koin</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="light-theme">
+    <div class="container">
+      <h1 class="mt-5 mb-4 text-center">Portofolio Coin</h1>
+      <div class="row mb-3 justify-content-center">
+        <div class="col-md-6">
+          <input
+            type="text"
+            id="coinNameInput"
+            class="form-control mb-2"
+            placeholder="Nama Koin"
+          />
+          <input
+            type="number"
+            id="coinAmountInput"
+            class="form-control mb-2"
+            placeholder="Jumlah Koin"
+          />
+          <button id="addCoinButton" class="btn btn-primary">
+            Tambah Koin
+          </button>
+        </div>
+      </div>
+      <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Rank</th>
+            <th scope="col">Name</th>
+            <th scope="col">Symbol</th>
+            <th scope="col">Price (IDR)</th>
+            <th scope="col">Jumlah Porto Anda (IDR)</th>
+            <th scope="col">Market Cap (IDR)</th>
+            <th scope="col">1h (%)</th>
+            <th scope="col">1d (%)</th>
+            <th scope="col">1w (%)</th>
+          </tr>
+        </thead>
+        <tbody id="portfolioTableBody">
+          <!-- Data akan diisi oleh portfolio.js -->
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="text-center">
+              <b>TOTAL PORTOFOLIO ANDA</b>
+            </td>
+            <td id="totalAmountIDR">Rp 0</td>
+            <td colspan="4"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="portfolio.js"></script>
+  </body>
+</html>

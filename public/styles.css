@@ -1,0 +1,114 @@
+/* Mengatur transisi untuk perubahan warna latar belakang dan warna teks pada elemen body */
+body {
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 14px;
+}
+
+/* Warna latar belakang dan teks untuk tema terang */
+body.light-theme {
+  background-color: #ffffff; /* Latar belakang putih */
+  color: #000000; /* Teks hitam */
+}
+
+/* Warna latar belakang dan teks untuk tema gelap */
+body.dark-theme {
+  background-color: #121212; /* Latar belakang hitam */
+  color: #ffffff; /* Teks putih */
+}
+
+/* Mengatur transisi untuk perubahan warna latar belakang dan warna teks pada elemen tabel */
+.table {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Pengaturan teks pada elemen th dan td tabel agar rata tengah dan vertikal tengah */
+.table th, .table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Menambahkan pointer cursor pada elemen th tabel */
+.table th {
+  cursor: pointer;
+}
+
+/* Menambahkan margin kiri pada ikon di dalam elemen th tabel */
+.table th i {
+  margin-left: 5px;
+}
+
+/* Menambahkan efek hover pada baris tabel di tbody */
+.table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* Warna latar belakang abu-abu muda dengan transparansi 5% */
+}
+
+/* Warna latar belakang dan teks untuk tabel pada tema terang */
+.light-theme .table {
+  background-color: #f8f9fa; /* Latar belakang abu-abu sangat terang */
+  color: #1f1f1f; /* Teks abu-abu gelap */
+}
+
+/* Warna latar belakang dan teks untuk tabel pada tema gelap */
+.dark-theme .table {
+  background-color: #1f1f1f; /* Latar belakang abu-abu sangat gelap */
+  color: #f8f9fa; /* Teks abu-abu sangat terang */
+}
+
+/* Pengaturan marquee widget */
+#coinmarketcap-widget-marquee {
+  position: fixed; /* Diposisikan tetap di bagian bawah layar */
+  bottom: 0;
+  width: 100%; /* Lebar penuh */
+  background-color: whitesmoke; /* Latar belakang putih asap */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Bayangan lembut di atas */
+  padding: 10px 0; /* Padding atas dan bawah */
+}
+
+/* Pengaturan tombol pengubah tema */
+.theme-switcher {
+  position: absolute; /* Diposisikan absolut di bagian kanan atas */
+  top: 10px;
+  right: 10px;
+  cursor: pointer; /* Menambahkan pointer cursor */
+  font-size: 1.5rem; /* Ukuran font besar */
+  transition: color 0.3s; /* Transisi untuk perubahan warna */
+}
+
+/* Transisi untuk perubahan warna ikon di dalam pengubah tema */
+.theme-switcher i {
+  transition: color 0.3s;
+}
+
+/* Warna ikon pengubah tema pada tema terang */
+.light-theme .theme-switcher i {
+  color: #000000; /* Ikon hitam */
+}
+
+/* Warna ikon pengubah tema pada tema gelap */
+.dark-theme .theme-switcher i {
+  color: #ffffff; /* Ikon putih */
+}
+
+/* Mengatur transisi untuk perubahan warna latar belakang, warna teks, dan warna border pada elemen search-bar */
+.search-bar {
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/* Warna latar belakang, teks, dan border pada search-bar untuk tema terang */
+.light-theme .search-bar {
+  background-color: #ffffff; /* Latar belakang putih */
+  color: #000000; /* Teks hitam */
+  border-color: #ced4da; /* Warna border abu-abu terang */
+}
+
+/* Warna latar belakang, teks, dan border pada search-bar untuk tema gelap */
+.dark-theme .search-bar {
+  background-color: #2c2c2c; /* Latar belakang abu-abu gelap */
+  color: #ffffff; /* Teks putih */
+  border-color: #444444; /* Warna border abu-abu */
+}
+
+/* Menambahkan warna teks putih pada baris tabel yang di-hover pada tema gelap */
+.dark-theme .table tr:hover {
+  color: #ffffff;
+}

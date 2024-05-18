@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- Tag pembuka untuk HTML5 dan menentukan bahasa dokumen sebagai bahasa Inggris -->
+  <head>
+    <!-- Meta tag untuk karakter encoding dokumen -->
+    <meta charset="UTF-8" />
+    <!-- Meta tag untuk memastikan tampilan responsif di perangkat mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Judul halaman yang akan ditampilkan di tab browser -->
+    <title>Coin Detail</title>
+    <style>
+      /* Mengatur gaya CSS untuk elemen h1 */
+      h1 {
+        text-align: center; /* Mengatur teks agar rata tengah */
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Elemen heading untuk menampilkan nama koin -->
+    <h1 id="coinName"></h1>
+    <!-- Kontainer untuk widget TradingView -->
+    <div class="tradingview-widget-container">
+      <!-- Div ini akan berisi widget TradingView -->
+      <div id="tradingview-widget-container__widget"></div>
+      <!-- Copyright informasi TradingView -->
+      <div class="tradingview-widget-copyright">
+        <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+          <span class="blue-text">Track all markets on TradingView</span>
+        </a>
+      </div>
+      <script type="text/javascript">
+        // Mengambil parameter dari URL
+        const params = new URLSearchParams(window.location.search);
+        const symbol = params.get("symbol"); // Mendapatkan nilai parameter "symbol"
+        const name = params.get("name"); // Mendapatkan nilai parameter "name"
+
+        // Mengatur nama koin di elemen h1
+        document.getElementById("coinName").innerText = name;
+
+        // Menunggu sampai skrip TradingView dimuat
+        window.addEventListener("load", function () {
+          new TradingView.widget({
+            container_id: "tradingview-widget-container__widget", // ID kontainer untuk widget
+            width: 980, // Lebar widget
+            height: 610, // Tinggi widget
+            symbol: symbol, // Simbol koin untuk ditampilkan di widget
+            interval: "D", // Interval waktu untuk grafik (harian)
+            timezone: "Etc/UTC", // Zona waktu untuk widget
+            theme: "dark", // Tema widget (gelap)
+            style: "1", // Gaya grafik
+            locale: "en", // Bahasa untuk widget
+            toolbar_bg: "#f1f3f6", // Warna latar belakang toolbar
+            enable_publishing: false, // Menonaktifkan fitur penerbitan
+            allow_symbol_change: true, // Mengizinkan perubahan simbol
+            show_popup_button: true, // Menampilkan tombol popup
+            popup_width: "1000", // Lebar popup
+            popup_height: "650", // Tinggi popup
+            referral_id: "12345", // ID referral untuk pelacakan
+          });
+        });
+      </script>
+      <!-- Menyertakan skrip TradingView dari sumber eksternal -->
+      <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    </div>
+  </body>
+</html>
