@@ -127,6 +127,14 @@ body.dark-theme {
   padding: 0 15px; /* Menyesuaikan padding sesuai kebutuhan */
   margin-bottom: 100px; /* Menambahkan margin bawah agar tabel tidak terhalang marquee */
 }
+.modal-body {
+  max-height: 400px;
+ 
+}
+
+.form-check {
+  padding: 5px 0;
+}
 
 /* Menambahkan container untuk tabel agar bisa di-scroll */
 .table-container {

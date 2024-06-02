@@ -1,66 +1,111 @@
-// Event listener untuk menunggu sampai seluruh konten halaman dimuat
 document.addEventListener('DOMContentLoaded', async () => {
-    let coins = []; // Array untuk menyimpan data koin dari API
-    let portfolio = []; // Array untuk menyimpan data portofolio pengguna
-    const portfolioTableBody = document.getElementById('portfolioTableBody'); // Referensi ke elemen tbody dari tabel portofolio
-    const coinNameInput = document.getElementById('coinNameInput'); // Referensi ke input untuk nama koin
-    const coinAmountInput = document.getElementById('coinAmountInput'); // Referensi ke input untuk jumlah koin
-    const addCoinButton = document.getElementById('addCoinButton'); // Referensi ke tombol untuk menambah koin ke portofolio
-    const totalAmountIDR = document.getElementById('totalAmountIDR'); // Referensi ke elemen untuk menampilkan total nilai portofolio
+    let coins = [];
+    let portfolio = [];
+    let selectedCoin = null;
 
-    // Fungsi untuk mengambil data koin dari API
+    const portfolioTableBody = document.getElementById('portfolioTableBody');
+    const addCoinButton = document.getElementById('addCoinButton');
+    const saveCoinButton = document.getElementById('saveCoinButton');
+    const coinSearchInput = document.getElementById('coinSearchInput');
+    const coinAmountInput = document.getElementById('coinAmountInput');
+    const portfolioTotalAmount = document.getElementById('portfolioTotalAmount');
+    const coinList = document.getElementById('coinList');
+    const monitorButton = document.getElementById('monitorButton');
+
     async function fetchData() {
         try {
-            const response = await fetch('/api/coins'); // Mengambil data dari endpoint API
-            coins = await response.json(); // Mengonversi data JSON dari respons ke dalam array coins
+            const response = await fetch('/api/coins');
+            coins = await response.json();
+            displayCoinList(coins); // Display the full list of coins initially
         } catch (error) {
-            console.error('Error fetching coin data:', error); // Menangkap dan menampilkan error jika terjadi kesalahan
+            console.error('Error fetching coin data:', error);
         }
     }
 
-    // Fungsi untuk menampilkan portofolio di tabel
-    function displayPortfolio() {
-        portfolioTableBody.innerHTML = ''; // Mengosongkan isi tabel portofolio
+    function displayCoinList(coinArray) {
+        coinList.innerHTML = '';
+        coinArray.forEach(coin => {
+            const coinItem = document.createElement('a');
+            coinItem.className = 'list-group-item list-group-item-action';
+            const logoUrl = coin.logo || `https://s2.coinmarketcap.com/static/img/coins/64x64/${coin.id}.png`;
+            coinItem.innerHTML = `
+                <img src="${logoUrl}" alt="${coin.name}" width="20" height="20" class="mr-2">
+                ${coin.name} (${coin.symbol})
+            `;
+            coinItem.addEventListener('click', () => {
+                selectedCoin = coin;
+                $('#selectCoinModal').modal('hide');
+                $('#addCoinModal').modal('show');
+            });
+            coinList.appendChild(coinItem);
+        });
+    }
 
-        let totalPortfolioValue = 0; // Variabel untuk menyimpan total nilai portofolio
-        portfolio.forEach(item => {
-            // Mencari koin yang sesuai dengan nama atau simbol dari portofolio
-            const coin = coins.find(c => c.name.toLowerCase() === item.name.toLowerCase() || c.symbol.toUpperCase() === item.name.toUpperCase());
+    function displayPortfolio() {
+        portfolioTableBody.innerHTML = '';
+
+        let totalPortfolioValue = 0;
+        portfolio.forEach((item, index) => {
+            const coin = coins.find(c => c.id === item.coin.id);
             if (coin) {
-                const row = document.createElement('tr'); // Membuat elemen baris baru untuk tabel
-                const tvSymbol = `BINANCE:${coin.symbol}USDT`; // Membuat simbol untuk TradingView
-                const logoUrl = coin.logo ? coin.logo : `https://s2.coinmarketcap.com/static/img/coins/64x64/${coin.id}.png`; // Menentukan URL logo koin
-                const coinValue = item.amount * coin.quote.IDR.price; // Menghitung nilai portofolio untuk koin tertentu
-                totalPortfolioValue += coinValue; // Menambahkan nilai portofolio koin ke total nilai portofolio
-                
-                // Menambahkan HTML ke dalam baris tabel dengan data koin
+                const row = document.createElement('tr');
+                const coinValue = item.amount * coin.quote.IDR.price;
+                totalPortfolioValue += coinValue;
+
+                const logoUrl = coin.logo || `https://s2.coinmarketcap.com/static/img/coins/64x64/${coin.id}.png`;
+
                 row.innerHTML = `
                     <td>${coin.cmc_rank}</td>
-                    <td><a href="detail.html?symbol=${tvSymbol}&name=${coin.name}">${coin.name}</a></td>
+                    <td><a href="detail.html?symbol=${coin.symbol}&name=${coin.name}">${coin.name}</a></td>
                     <td><img src="${logoUrl}" alt="${coin.symbol}" width="20" height="20"> ${coin.symbol}</td>
                     <td>Rp ${coin.quote.IDR.price.toLocaleString('id-ID')}</td>
+                    <td>${item.amount.toLocaleString('id-ID')}</td>
                     <td>Rp ${coinValue.toLocaleString('id-ID')}</td> 
                     <td>Rp ${coin.quote.IDR.market_cap.toLocaleString('id-ID')}</td>
                     <td>${coin.quote.IDR.percent_change_1h.toFixed(2)}%</td>
                     <td>${coin.quote.IDR.percent_change_24h.toFixed(2)}%</td>
                     <td>${coin.quote.IDR.percent_change_7d.toFixed(2)}%</td>
                 `;
-                portfolioTableBody.appendChild(row); // Menambahkan baris ke dalam tabel portofolio
+                portfolioTableBody.appendChild(row);
             }
         });
-        // Menampilkan total nilai portofolio
-        totalAmountIDR.textContent = `Rp ${totalPortfolioValue.toLocaleString('id-ID')}`;
+        
+        portfolioTotalAmount.textContent = `Rp ${totalPortfolioValue.toLocaleString('id-ID')}`;
+
+        // Store portfolio in localStorage
+        localStorage.setItem('portfolio', JSON.stringify(portfolio));
     }
 
-    // Event listener untuk menambahkan koin ke portofolio saat tombol ditekan
+    coinSearchInput.addEventListener('input', () => {
+        const searchTerm = coinSearchInput.value.toLowerCase();
+        const filteredCoins = coins.filter(coin => 
+            coin.name.toLowerCase().includes(searchTerm) || 
+            coin.symbol.toLowerCase().includes(searchTerm)
+        );
+        displayCoinList(filteredCoins);
+    });
+
     addCoinButton.addEventListener('click', () => {
-        const coinName = coinNameInput.value.trim(); // Mengambil dan menghapus spasi dari input nama koin
-        const coinAmount = parseFloat(coinAmountInput.value.trim()); // Mengambil dan mengonversi input jumlah koin ke angka
-        if (coinName && !isNaN(coinAmount)) { // Memastikan bahwa nama koin dan jumlah koin valid
-            portfolio.push({ name: coinName, amount: coinAmount }); // Menambahkan koin ke array portofolio
-            displayPortfolio(); // Memperbarui tampilan portofolio
+        $('#selectCoinModal').modal('show');
+    });
+
+    saveCoinButton.addEventListener('click', () => {
+        const coinAmount = parseFloat(coinAmountInput.value.trim());
+     
+        if (selectedCoin && !isNaN(coinAmount)) {
+            portfolio.push({ coin: selectedCoin, amount: coinAmount });
+            displayPortfolio();
+            $('#addCoinModal').modal('hide');
         }
     });
 
-    await fetchData(); // Memanggil fungsi untuk mengambil data koin dari API setelah halaman dimuat
+    monitorButton.addEventListener('click', () => {
+        if (portfolio.length === 0) {
+            alert('Tidak ada koin di portofolio untuk dimonitor.');
+        } else {
+            window.location.href = 'monitor.html';
+        }
+    });
+
+    await fetchData();
 });

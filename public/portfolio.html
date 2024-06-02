@@ -19,26 +19,112 @@
   </head>
   <body class="light-theme">
     <div class="container">
-      <h1 class="mt-5 mb-4 text-center">Portofolio Coin</h1>
-      <div class="row mb-3 justify-content-center">
-        <div class="col-md-6">
-          <input
-            type="text"
-            id="coinNameInput"
-            class="form-control mb-2"
-            placeholder="Nama Koin"
-          />
-          <input
-            type="number"
-            id="coinAmountInput"
-            class="form-control mb-2"
-            placeholder="Jumlah Koin"
-          />
-          <button id="addCoinButton" class="btn btn-primary">
+      <h1 class="mt-5 mb-4 text-center">Portofolio Koin</h1>
+
+      <div class="d-flex justify-content-between mb-3">
+        <div>
+          <span
+            id="portfolioTotalAmount"
+            class="font-weight-bold"
+            style="font-size: 30px"
+            >Rp 0</span
+          >
+        </div>
+        <div>
+          <button id="addCoinButton" class="btn btn-primary mr-2">
             Tambah Koin
           </button>
+          <button id="monitorButton" class="btn btn-secondary">Monitor</button>
         </div>
       </div>
+
+      <!-- Modal untuk memilih koin dari daftar -->
+      <div
+        class="modal fade"
+        id="selectCoinModal"
+        tabindex="-1"
+        aria-labelledby="selectCoinModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="selectCoinModalLabel">Pilih Koin</h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input
+                type="text"
+                id="coinSearchInput"
+                class="form-control mb-2"
+                placeholder="Cari Koin"
+              />
+              <div
+                id="coinList"
+                class="list-group"
+                style="max-height: 400px; overflow-y: auto"
+              >
+                <!-- Daftar koin akan diisi di sini -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal untuk memasukkan jumlah koin  -->
+      <div
+        class="modal fade"
+        id="addCoinModal"
+        tabindex="-1"
+        aria-labelledby="addCoinModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addCoinModalLabel">
+                Tambah Koin ke Portofolio
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input
+                type="number"
+                id="coinAmountInput"
+                class="form-control mb-2"
+                placeholder="Jumlah Koin"
+              />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Batal
+              </button>
+              <button type="button" class="btn btn-primary" id="saveCoinButton">
+                Simpan
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <table class="table table-bordered table-hover">
         <thead class="thead-dark">
           <tr>
@@ -46,6 +132,7 @@
             <th scope="col">Name</th>
             <th scope="col">Symbol</th>
             <th scope="col">Price (IDR)</th>
+            <th scope="col">Jumlah Koin (qty)</th>
             <th scope="col">Jumlah Porto Anda (IDR)</th>
             <th scope="col">Market Cap (IDR)</th>
             <th scope="col">1h (%)</th>
@@ -56,18 +143,14 @@
         <tbody id="portfolioTableBody">
           <!-- Data akan diisi oleh portfolio.js -->
         </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="4" class="text-center">
-              <b>TOTAL PORTOFOLIO ANDA</b>
-            </td>
-            <td id="totalAmountIDR">Rp 0</td>
-            <td colspan="4"></td>
-          </tr>
-        </tfoot>
       </table>
     </div>
+
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Portfolio JavaScript -->
     <script src="portfolio.js"></script>
   </body>
 </html>

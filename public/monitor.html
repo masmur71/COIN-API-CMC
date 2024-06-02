@@ -32,32 +32,36 @@
     </div>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const symbolsParam = urlParams.get("symbols");
         const container = document.getElementById("widgetsContainer");
         const noSymbolsMessage = document.getElementById("noSymbolsMessage");
 
-        if (symbolsParam) {
-          const symbols = symbolsParam.split(",");
+        const portfolio = JSON.parse(localStorage.getItem("portfolio")) || [];
 
-          if (symbols.length > 0 && symbols[0] !== "") {
-            const tradingViewScript = document.createElement("script");
-            tradingViewScript.src = "https://s3.tradingview.com/tv.js";
-            tradingViewScript.onload = () => {
-              symbols.forEach((symbol) => {
+        if (portfolio.length > 0) {
+          const tradingViewScript = document.createElement("script");
+          tradingViewScript.src = "https://s3.tradingview.com/tv.js";
+          tradingViewScript.onload = () => {
+            const displayedSymbols = new Set();
+
+            portfolio.forEach((item) => {
+              const symbol = item.coin.symbol;
+
+              if (!displayedSymbols.has(symbol)) {
+                displayedSymbols.add(symbol);
+
                 const widgetContainerId = `tradingview_${symbol}`;
                 const widget = document.createElement("div");
                 widget.className = "col-md-6 col-lg-4";
                 widget.innerHTML = `
-                <div class="card">
-                  <div class="card-body">
-                    <h3 class="card-title">${symbol}</h3>
-                    <div class="tradingview-widget-container">
-                      <div id="${widgetContainerId}"></div>
+                  <div class="card">
+                    <div class="card-body">
+                      <h3 class="card-title">${symbol}</h3>
+                      <div class="tradingview-widget-container">
+                        <div id="${widgetContainerId}"></div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              `;
+                `;
                 container.appendChild(widget);
 
                 new TradingView.widget({
@@ -81,19 +85,16 @@
                   news: ["headlines"],
                   studies: [],
                   show_popup_button: false,
-                  popup_width: "1200", // Mengubah lebar popup menjadi lebih besar
-                  popup_height: "800", // Mengubah tinggi popup menjadi lebih besar
+                  popup_width: "1200",
+                  popup_height: "800",
                 });
-              });
-            };
-            document.body.appendChild(tradingViewScript);
-          } else {
-            noSymbolsMessage.innerHTML =
-              "<p>Tidak ada simbol yang dipilih untuk dipantau.</p>";
-          }
+              }
+            });
+          };
+          document.body.appendChild(tradingViewScript);
         } else {
           noSymbolsMessage.innerHTML =
-            "<p>Tidak ada simbol yang dipilih untuk dipantau.</p>";
+            "<p>Tidak ada koin di portofolio untuk dimonitor.</p>";
         }
       });
     </script>
