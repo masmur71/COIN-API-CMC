@@ -20,15 +20,21 @@
   <body class="light-theme">
     <!-- Container Utama -->
     <div class="container">
-      <h1 class="mt-5 mb-4 text-center">Data Coin</h1>
-      <!-- Tema Switcher -->
-      <div class="theme-switcher" id="themeSwitcher">
-        <i class="fas fa-moon"></i>
-        <!-- Ikon untuk mengubah tema -->
+      <div class="row align-items-center justify-content-between mb-4">
+        <div class="col-md-auto">
+          <h1 class="mt-5 mb-10">Data Coin</h1>
+        </div>
+        
+        <div class="col-md-auto">
+          <a href="portfolio.html" class="btn btn-secondary btn-sm">Portofolio</a>
+          <a href="watchlist.html" class="btn btn-secondary btn-sm">Watchlist</a>
+        </div>
+ 
+
       </div>
       <!-- Input Pencarian Koin -->
-      <div class="row mb-3 justify-content-center">
-        <div class="col-md-6">
+      <div class="row mb-3 justify-content-end">
+        <div class="col-md-2">
           <input
             type="text"
             id="searchInput"
@@ -36,11 +42,7 @@
             placeholder="Cari koin..."
           />
         </div>
-      </div>
-      <!-- Tombol Portofolio -->
-      <div class="text-center mb-4">
-        <a href="portfolio.html" class="btn btn-primary">Portofolio</a>
-      </div>
+      </div class="table-container">
       <!-- Tabel Data Koin -->
       <table class="table table-bordered table-hover">
         <thead class="thead-dark">

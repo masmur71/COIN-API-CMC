@@ -1,7 +1,11 @@
 /* Mengatur transisi untuk perubahan warna latar belakang dan warna teks pada elemen body */
 body {
   transition: background-color 0.3s, color 0.3s;
-  font-size: 14px;
+  font-size: 11px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
 /* Warna latar belakang dan teks untuk tema terang */
@@ -19,17 +23,21 @@ body.dark-theme {
 /* Mengatur transisi untuk perubahan warna latar belakang dan warna teks pada elemen tabel */
 .table {
   transition: background-color 0.3s, color 0.3s;
+  width: 100%; /* Memastikan tabel memenuhi lebar window */
+  table-layout: auto; /* Biarkan browser mengatur lebar kolom secara otomatis */
 }
 
 /* Pengaturan teks pada elemen th dan td tabel agar rata tengah dan vertikal tengah */
 .table th, .table td {
   text-align: center;
   vertical-align: middle;
+  white-space: nowrap; /* Mencegah teks dalam kolom menjadi lebih dari satu baris */
 }
 
 /* Menambahkan pointer cursor pada elemen th tabel */
 .table th {
   cursor: pointer;
+  white-space: nowrap; /* Mencegah teks dalam kolom menjadi lebih dari satu baris */
 }
 
 /* Menambahkan margin kiri pada ikon di dalam elemen th tabel */
@@ -111,4 +119,18 @@ body.dark-theme {
 /* Menambahkan warna teks putih pada baris tabel yang di-hover pada tema gelap */
 .dark-theme .table tr:hover {
   color: #ffffff;
+}
+
+/* Mengatur margin pada container utama */
+.container {
+  max-width: 100%; /* Memastikan container utama menggunakan lebar penuh */
+  padding: 0 15px; /* Menyesuaikan padding sesuai kebutuhan */
+  margin-bottom: 100px; /* Menambahkan margin bawah agar tabel tidak terhalang marquee */
+}
+
+/* Menambahkan container untuk tabel agar bisa di-scroll */
+.table-container {
+  max-height: calc(100vh - 150px); /* Tinggi maksimum container dengan memperhitungkan tinggi marquee dan padding */
+  overflow-y: auto; /* Tambahkan scrollbar vertikal jika konten lebih tinggi dari container */
+  margin-bottom: 20px; /* Tambahkan margin bawah jika diperlukan */
 }

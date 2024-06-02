@@ -1,4 +1,3 @@
-// Menunggu konten DOM dimuat sebelum menjalankan skrip
 document.addEventListener('DOMContentLoaded', async () => {
     // Array untuk menyimpan data koin
     let coins = [];
@@ -6,8 +5,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tableBody = document.getElementById('coinTableBody');
     // Mengambil elemen input pencarian
     const searchInput = document.getElementById('searchInput');
-    // Mengambil elemen pengalih tema
-    const themeSwitcher = document.getElementById('themeSwitcher');
 
     // Fungsi untuk mengambil data koin dari API
     async function fetchData() {
@@ -46,8 +43,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td><a href="detail.html?symbol=${tvSymbol}&name=${coin.name}">${coin.name}</a></td>
                 <td><img src="${logoUrl}" alt="${coin.symbol}" width="20" height="20"> ${coin.symbol}</td>
                 <td>Rp ${coin.quote.IDR.price.toLocaleString('id-ID')}</td>
-                <td>Rp ${coin.quote.IDR.volume_24h.toLocaleString('id-ID')}</td>
-                <td>Rp ${coin.quote.IDR.market_cap.toLocaleString('id-ID')}</td>
+                <td>Rp ${Math.round(coin.quote.IDR.volume_24h).toLocaleString('id-ID')}</td>
+                <td>Rp ${Math.round(coin.quote.IDR.market_cap).toLocaleString('id-ID')}</td>
                 <td>${colorTextBasedOnChange(coin.quote.IDR.percent_change_1h)}</td>
                 <td>${colorTextBasedOnChange(coin.quote.IDR.percent_change_24h)}</td>
                 <td>${colorTextBasedOnChange(coin.quote.IDR.percent_change_7d)}</td>
@@ -107,58 +104,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         displayCoins(sortedCoins);
     }
 
-    // Variabel untuk menyimpan kolom yang sedang diurutkan saat ini
-    let currentSortColumn = null;
-    // Variabel untuk menyimpan urutan pengurutan saat ini
-    let currentSortOrder = 'asc';
-
-    // Fungsi untuk mengubah urutan pengurutan saat pengguna mengklik header tabel
-    function toggleSort(column) {
-        if (currentSortColumn === column) {
-            currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
-        } else {
-            currentSortColumn = column;
-            currentSortOrder = 'asc';
-        }
-        sortCoins(coins, currentSortColumn, currentSortOrder);
-    }
-
-    // Menambahkan event listener untuk pengurutan pada header tabel
-    document.querySelectorAll('.table th[data-column]').forEach(th => {
-        th.addEventListener('click', () => {
-            const column = th.getAttribute('data-column');
-            toggleSort(column);
-        });
-    });
-
-    // Event listener untuk pencarian koin
+    // Event listener untuk input pencarian
     searchInput.addEventListener('input', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        const filteredCoins = coins.filter(coin =>
-            coin.name.toLowerCase().includes(searchTerm) || coin.symbol.toLowerCase().includes(searchTerm)
-        );
+        const query = searchInput.value.toLowerCase();
+        const filteredCoins = coins.filter(coin => coin.name.toLowerCase().includes(query));
         displayCoins(filteredCoins);
     });
 
-    // Event listener untuk pengalih tema
-    const temaMarki = document.getElementById("coinmarketcap-widget-marquee");
-    themeSwitcher.addEventListener('click', () => {
-        // Mengganti kelas tema pada elemen body
-        document.body.classList.toggle('dark-theme');
-        document.body.classList.toggle('light-theme');
-        const themeIcon = themeSwitcher.querySelector('i');
-        if (document.body.classList.contains('dark-theme')) {
-            // Mengubah ikon pengalih tema menjadi ikon matahari saat tema gelap aktif
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-            temaMarki.setAttribute('theme', 'dark');
-        } else {
-            // Mengubah ikon pengalih tema menjadi ikon bulan saat tema terang aktif
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
-        }
+    // Event listener untuk pengurutan tabel
+    document.querySelectorAll('th[data-column]').forEach(header => {
+        header.addEventListener('click', () => {
+            const column = header.getAttribute('data-column');
+            const order = header.getAttribute('data-order') === 'asc' ? 'desc' : 'asc';
+            header.setAttribute('data-order', order);
+            sortCoins(coins, column, order);
+        });
     });
 
-    // Memanggil fungsi fetchData untuk mengambil data koin saat halaman dimuat
+    // Memanggil fungsi untuk mengambil data koin
     fetchData();
 });

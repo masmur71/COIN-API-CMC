@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monitor Koin</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+      .card {
+        margin-bottom: 1rem;
+      }
+      .coin-logo {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <!-- Menggunakan container-fluid agar container memenuhi lebar layar -->
+      <h1 class="mt-5 mb-4 text-center">Monitor Koin</h1>
+      <div id="widgetsContainer" class="row"></div>
+      <div id="noSymbolsMessage" class="text-center mt-5"></div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const symbolsParam = urlParams.get("symbols");
+        const container = document.getElementById("widgetsContainer");
+        const noSymbolsMessage = document.getElementById("noSymbolsMessage");
+
+        if (symbolsParam) {
+          const symbols = symbolsParam.split(",");
+
+          if (symbols.length > 0 && symbols[0] !== "") {
+            const tradingViewScript = document.createElement("script");
+            tradingViewScript.src = "https://s3.tradingview.com/tv.js";
+            tradingViewScript.onload = () => {
+              symbols.forEach((symbol) => {
+                const widgetContainerId = `tradingview_${symbol}`;
+                const widget = document.createElement("div");
+                widget.className = "col-md-6 col-lg-4";
+                widget.innerHTML = `
+                <div class="card">
+                  <div class="card-body">
+                    <h3 class="card-title">${symbol}</h3>
+                    <div class="tradingview-widget-container">
+                      <div id="${widgetContainerId}"></div>
+                    </div>
+                  </div>
+                </div>
+              `;
+                container.appendChild(widget);
+
+                new TradingView.widget({
+                  container_id: widgetContainerId,
+                  autosize: true,
+                  symbol: `BINANCE:${symbol}USDT`,
+                  interval: "D",
+                  timezone: "Etc/UTC",
+                  theme: "dark",
+                  style: "1",
+                  locale: "id",
+                  toolbar_bg: "#f1f3f6",
+                  enable_publishing: false,
+                  allow_symbol_change: true,
+                  hide_top_toolbar: true,
+                  hide_side_toolbar: true,
+                  hide_legend: true,
+                  details: false,
+                  hotlist: false,
+                  calendar: false,
+                  news: ["headlines"],
+                  studies: [],
+                  show_popup_button: false,
+                  popup_width: "1200", // Mengubah lebar popup menjadi lebih besar
+                  popup_height: "800", // Mengubah tinggi popup menjadi lebih besar
+                });
+              });
+            };
+            document.body.appendChild(tradingViewScript);
+          } else {
+            noSymbolsMessage.innerHTML =
+              "<p>Tidak ada simbol yang dipilih untuk dipantau.</p>";
+          }
+        } else {
+          noSymbolsMessage.innerHTML =
+            "<p>Tidak ada simbol yang dipilih untuk dipantau.</p>";
+        }
+      });
+    </script>
+  </body>
+</html>
