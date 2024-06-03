@@ -22,6 +22,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    function colorTextBasedOnChange(value) {
+        if (value > 0) {
+            return `<span style="color: green;">${value.toFixed(2)}%</span>`;
+        } else if (value < 0) {
+            return `<span style="color: red;">${value.toFixed(2)}%</span>`;
+        } else {
+            return `<span>${value.toFixed(2)}%</span>`;
+        }
+    }
+
     function displayCoinList(coinArray) {
         coinList.innerHTML = '';
         coinArray.forEach(coin => {
@@ -54,22 +64,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const logoUrl = coin.logo || `https://s2.coinmarketcap.com/static/img/coins/64x64/${coin.id}.png`;
 
+                const tvSymbol = `BINANCE:${coin.symbol}USDT`;
+
                 row.innerHTML = `
                     <td>${coin.cmc_rank}</td>
-                    <td><a href="detail.html?symbol=${coin.symbol}&name=${coin.name}">${coin.name}</a></td>
+                    <td><a href="detail.html?symbol=${tvSymbol}&name=${coin.name}">${coin.name}</a></td>
                     <td><img src="${logoUrl}" alt="${coin.symbol}" width="20" height="20"> ${coin.symbol}</td>
                     <td>Rp ${coin.quote.IDR.price.toLocaleString('id-ID')}</td>
                     <td>${item.amount.toLocaleString('id-ID')}</td>
-                    <td>Rp ${coinValue.toLocaleString('id-ID')}</td> 
+                    <td>Rp ${coinValue.toLocaleString('id-ID')}</td>
                     <td>Rp ${coin.quote.IDR.market_cap.toLocaleString('id-ID')}</td>
-                    <td>${coin.quote.IDR.percent_change_1h.toFixed(2)}%</td>
-                    <td>${coin.quote.IDR.percent_change_24h.toFixed(2)}%</td>
-                    <td>${coin.quote.IDR.percent_change_7d.toFixed(2)}%</td>
+                    <td>${colorTextBasedOnChange(coin.quote.IDR.percent_change_1h)}</td>
+                    <td>${colorTextBasedOnChange(coin.quote.IDR.percent_change_24h)}</td>
+                    <td>${colorTextBasedOnChange(coin.quote.IDR.percent_change_7d)}</td>
                 `;
                 portfolioTableBody.appendChild(row);
             }
         });
-        
+
         portfolioTotalAmount.textContent = `Rp ${totalPortfolioValue.toLocaleString('id-ID')}`;
 
         // Store portfolio in localStorage
@@ -78,8 +90,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     coinSearchInput.addEventListener('input', () => {
         const searchTerm = coinSearchInput.value.toLowerCase();
-        const filteredCoins = coins.filter(coin => 
-            coin.name.toLowerCase().includes(searchTerm) || 
+        const filteredCoins = coins.filter(coin =>
+            coin.name.toLowerCase().includes(searchTerm) ||
             coin.symbol.toLowerCase().includes(searchTerm)
         );
         displayCoinList(filteredCoins);
@@ -91,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     saveCoinButton.addEventListener('click', () => {
         const coinAmount = parseFloat(coinAmountInput.value.trim());
-     
+
         if (selectedCoin && !isNaN(coinAmount)) {
             portfolio.push({ coin: selectedCoin, amount: coinAmount });
             displayPortfolio();

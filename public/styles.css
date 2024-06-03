@@ -1,7 +1,7 @@
 /* Mengatur transisi untuk perubahan warna latar belakang dan warna teks pada elemen body */
 body {
   transition: background-color 0.3s, color 0.3s;
-  font-size: 11px;
+  font-size: 14px;
   margin: 0;
   padding: 0;
   box-sizing: border-box;

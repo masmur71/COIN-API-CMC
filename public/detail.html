@@ -1,74 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
-  <!-- Tag pembuka untuk HTML5 dan menentukan bahasa dokumen sebagai bahasa Inggris -->
   <head>
-    <!-- Meta tag untuk karakter encoding dokumen -->
     <meta charset="UTF-8" />
-    <!-- Meta tag untuk memastikan tampilan responsif di perangkat mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Judul halaman yang akan ditampilkan di tab browser -->
     <title>Coin Detail</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
-      /* Mengatur gaya CSS untuk elemen h1 */
-      h1 {
-        text-align: center; /* Mengatur teks agar rata tengah */
+      .coin-info .label {
+        font-weight: bold;
+      }
+      #tradingview-widget-container__widget {
+        height: 400px;
+      }
+      .news-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        cursor: pointer;
+      }
+      .news-item:hover {
+        background-color: #f8f9fa;
+      }
+      .news-item img {
+        width: 120px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 0.25rem;
+        margin-left: 15px;
+      }
+      .news-title {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 5px;
+      }
+      .news-source {
+        font-size: 0.9em;
+        color: gray;
+      }
+      .coin-info .card {
+        margin-bottom: 15px;
+      }
+      .coin-info .card-body {
+        padding: 10px;
       }
     </style>
   </head>
-
   <body>
-    <!-- Elemen heading untuk menampilkan nama koin -->
-    <h1 id="coinName"></h1>
-    <!-- Kontainer untuk widget TradingView -->
-    <div class="tradingview-widget-container">
-      <!-- Div ini akan berisi widget TradingView -->
-      <div id="tradingview-widget-container__widget"></div>
-      <!-- Copyright informasi TradingView -->
-      <div class="tradingview-widget-copyright">
-        <a
-          href="https://www.tradingview.com/"
-          rel="noopener nofollow"
-          target="_blank"
-        >
-          <span class="blue-text">Track all markets on TradingView</span>
-        </a>
+    <div class="container">
+      <h1 id="coinName" class="text-center my-4"></h1>
+      <div class="row">
+        <div class="col-md-4">
+          <div id="coinInfo" class="coin-info"></div>
+        </div>
+        <div class="col-md-8">
+          <div class="tradingview-widget-container">
+            <div id="tradingview-widget-container__widget"></div>
+            <div class="tradingview-widget-copyright">
+              <a
+                href="https://www.tradingview.com/"
+                rel="noopener nofollow"
+                target="_blank"
+                class="text-primary"
+              >
+                Track all markets on TradingView
+              </a>
+            </div>
+            <script type="text/javascript">
+              // Mengambil parameter dari URL
+              const params = new URLSearchParams(window.location.search);
+              const symbol = params.get("symbol");
+              const name = params.get("name");
+
+              // Mengatur nama koin di elemen h1
+              document.getElementById("coinName").innerText = name;
+
+              // Menunggu sampai skrip TradingView dimuat
+              window.addEventListener("load", function () {
+                new TradingView.widget({
+                  container_id: "tradingview-widget-container__widget",
+                  width: "100%",
+                  height: 400,
+                  symbol: symbol,
+                  interval: "D",
+                  timezone: "Etc/UTC",
+                  theme: "dark",
+                  style: "1",
+                  locale: "en",
+                  toolbar_bg: "#f1f3f6",
+                  enable_publishing: false,
+                  allow_symbol_change: true,
+                  show_popup_button: true,
+                  popup_width: "1000",
+                  popup_height: "650",
+                  referral_id: "12345",
+                });
+              });
+
+              // Mengambil data koin dari API
+              async function fetchCoinData() {
+                try {
+                  const response = await fetch("/api/coins");
+                  const coins = await response.json();
+                  const coin = coins.find(
+                    (c) => `BINANCE:${c.symbol}USDT` === symbol
+                  );
+
+                  if (coin) {
+                    const coinInfoDiv = document.getElementById("coinInfo");
+                    coinInfoDiv.innerHTML = `
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="mb-3"><span class="label">Rank:</span> ${
+                            coin.cmc_rank
+                          }</div>
+                          <div class="mb-3"><span class="label">Symbol:</span> ${
+                            coin.symbol
+                          }</div>
+                          <div class="mb-3"><span class="label">Price (IDR):</span> Rp ${coin.quote.IDR.price.toLocaleString(
+                            "id-ID"
+                          )}</div>
+                          <div class="mb-3"><span class="label">Volume (24h):</span> Rp ${Math.round(
+                            coin.quote.IDR.volume_24h
+                          ).toLocaleString("id-ID")}</div>
+                          <div class="mb-3"><span class="label">Market Cap:</span> Rp ${Math.round(
+                            coin.quote.IDR.market_cap
+                          ).toLocaleString("id-ID")}</div>
+                          <div class="mb-3"><span class="label">1h Change:</span> ${colorTextBasedOnChange(
+                            coin.quote.IDR.percent_change_1h
+                          )}</div>
+                          <div class="mb-3"><span class="label">24h Change:</span> ${colorTextBasedOnChange(
+                            coin.quote.IDR.percent_change_24h
+                          )}</div>
+                          <div class="mb-3"><span class="label">7d Change:</span> ${colorTextBasedOnChange(
+                            coin.quote.IDR.percent_change_7d
+                          )}</div>
+                        </div>
+                      </div>
+                    `;
+                  }
+                } catch (error) {
+                  console.error("Error fetching coin data:", error);
+                }
+              }
+
+              function colorTextBasedOnChange(value) {
+                if (value > 0) {
+                  return `<span class="text-success">${value.toFixed(
+                    2
+                  )}%</span>`;
+                } else if (value < 0) {
+                  return `<span class="text-danger">${value.toFixed(
+                    2
+                  )}%</span>`;
+                } else {
+                  return `<span>${value.toFixed(2)}%</span>`;
+                }
+              }
+
+              fetchCoinData();
+
+              // Menambahkan fungsi untuk mengambil berita terkait koin dari API berita
+              async function fetchNews() {
+                try {
+                  const response = await fetch(
+                    `/api/news?query=${name.toLowerCase()}`
+                  );
+                  const newsData = await response.json();
+
+                  const newsContainer =
+                    document.getElementById("newsContainer");
+                  if (newsData.articles && newsData.articles.length > 0) {
+                    newsContainer.innerHTML = newsData.articles
+                      .map(
+                        (article) => `
+                        <div class="news-item" onclick="window.open('${
+                          article.url
+                        }', '_blank')">
+                          <div>
+                            <div class="news-title">${article.title}</div>
+                            <div class="news-source">${
+                              article.source.name
+                            }</div>
+                          </div>
+                          <img src="${article.urlToImage || ""}" alt="${
+                          article.title
+                        }">
+                        </div>
+                      `
+                      )
+                      .join("");
+                  } else {
+                    newsContainer.innerHTML = "<p>No news available.</p>";
+                  }
+                } catch (error) {
+                  console.error("Error fetching news:", error);
+                  newsContainer.innerHTML = "<p>Error loading news.</p>";
+                }
+              }
+
+              fetchNews();
+            </script>
+            <script
+              type="text/javascript"
+              src="https://s3.tradingview.com/tv.js"
+            ></script>
+          </div>
+        </div>
       </div>
-      <script type="text/javascript">
-        // Mengambil parameter dari URL
-        const params = new URLSearchParams(window.location.search);
-        const symbol = params.get("symbol"); // Mendapatkan nilai parameter "symbol"
-        const name = params.get("name"); // Mendapatkan nilai parameter "name"
-
-        // Mengatur nama koin di elemen h1
-        document.getElementById("coinName").innerText = name;
-
-        // Menunggu sampai skrip TradingView dimuat
-        window.addEventListener("load", function () {
-          new TradingView.widget({
-            container_id: "tradingview-widget-container__widget", // ID kontainer untuk widget
-            width: 980, // Lebar widget
-            height: 610, // Tinggi widget
-            symbol: symbol, // Simbol koin untuk ditampilkan di widget
-            interval: "D", // Interval waktu untuk grafik (harian)
-            timezone: "Etc/UTC", // Zona waktu untuk widget
-            theme: "dark", // Tema widget (gelap)
-            style: "1", // Gaya grafik
-            locale: "en", // Bahasa untuk widget
-            toolbar_bg: "#f1f3f6", // Warna latar belakang toolbar
-            enable_publishing: false, // Menonaktifkan fitur penerbitan
-            allow_symbol_change: true, // Mengizinkan perubahan simbol
-            show_popup_button: true, // Menampilkan tombol popup
-            popup_width: "1000", // Lebar popup
-            popup_height: "650", // Tinggi popup
-            referral_id: "12345", // ID referral untuk pelacakan
-          });
-        });
-      </script>
-      <!-- Menyertakan skrip TradingView dari sumber eksternal -->
-      <script
-        type="text/javascript"
-        src="https://s3.tradingview.com/tv.js"
-      ></script>
+      <div id="newsSection" class="my-5">
+        <h2 class="text-center">Berita</h2>
+        <div id="newsContainer"></div>
+      </div>
     </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
 </html>
