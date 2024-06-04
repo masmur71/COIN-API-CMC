@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         const options = {
-            title: 'Distribusi Portofilio',
+            title: 'Portfolio Distribution',
             pieHole: 0.4,
         };
 
