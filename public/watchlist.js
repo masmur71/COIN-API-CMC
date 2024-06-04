@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   
       $('#addAssetModal').modal('hide');
     });
-  
+        
     searchInput.addEventListener('input', function() {
       const query = this.value;
       const filteredCoins = filterCoins(query);

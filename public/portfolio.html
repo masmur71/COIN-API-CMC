@@ -16,6 +16,11 @@
     />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css" />
+    <!-- Google Charts -->
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
   </head>
   <body class="light-theme">
     <div class="container">
@@ -31,7 +36,7 @@
           >
         </div>
         <div>
-          <button id="addCoinButton" class="btn btn-primary mr-2">
+          <button id="addCoinButton" class="btn btn-secondary mr-2">
             Tambah Koin
           </button>
           <button id="monitorButton" class="btn btn-secondary">Monitor</button>
@@ -90,7 +95,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="addCoinModalLabel">
-                Tambah Koin ke Portofolio
+                Masukkan Jumlah Coin
               </h5>
               <button
                 type="button"
@@ -138,12 +143,17 @@
             <th scope="col">1h (%)</th>
             <th scope="col">1d (%)</th>
             <th scope="col">1w (%)</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Hapus</th>
           </tr>
         </thead>
         <tbody id="portfolioTableBody">
           <!-- Data akan diisi oleh portfolio.js -->
         </tbody>
       </table>
+
+      <!-- Div untuk Pie Chart -->
+      <div id="piechart" style="width: 100%; height: 500px"></div>
     </div>
 
     <!-- jQuery -->

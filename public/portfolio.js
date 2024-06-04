@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const coinList = document.getElementById('coinList');
     const monitorButton = document.getElementById('monitorButton');
 
+    google.charts.load('current', {'packages':['corechart']});
+    
     async function fetchData() {
         try {
             const response = await fetch('/api/coins');
@@ -32,6 +34,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    let editingIndex = -1; // Menyimpan indeks baris yang sedang diedit
+
     function displayCoinList(coinArray) {
         coinList.innerHTML = '';
         coinArray.forEach(coin => {
@@ -49,6 +53,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             coinList.appendChild(coinItem);
         });
+    }
+
+    function drawChart() {
+        const data = new google.visualization.DataTable();
+        data.addColumn('string', 'Coin');
+        data.addColumn('number', 'Value');
+
+        portfolio.forEach(item => {
+            const coin = coins.find(c => c.id === item.coin.id);
+            if (coin) {
+                const coinValue = item.amount * coin.quote.IDR.price;
+                data.addRow([coin.name, coinValue]);
+            }
+        });
+
+        const options = {
+            title: 'Distribusi Portofilio',
+            pieHole: 0.4,
+        };
+
+        const chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
     }
 
     function displayPortfolio() {
@@ -77,8 +103,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <td>${colorTextBasedOnChange(coin.quote.IDR.percent_change_1h)}</td>
                     <td>${colorTextBasedOnChange(coin.quote.IDR.percent_change_24h)}</td>
                     <td>${colorTextBasedOnChange(coin.quote.IDR.percent_change_7d)}</td>
+                    <td>
+                        <button class="btn btn-dark btn-sm edit-button">Edit</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm delete-button">Hapus</button>
+                    </td>
                 `;
                 portfolioTableBody.appendChild(row);
+
+                // Event listener untuk tombol Edit
+                row.querySelector('.edit-button').addEventListener('click', () => {
+                    editingIndex = index; // Set indeks baris yang sedang diedit
+                    $('#coinAmountInput').val(portfolio[index].amount); // Set nilai input ke jumlah koin yang ada
+                    selectedCoin = coin;
+                    $('#addCoinModal').modal('show'); // Tampilkan modal edit koin
+                });
+
+                // Event listener untuk tombol Hapus
+                row.querySelector('.delete-button').addEventListener('click', () => {
+                    portfolio.splice(index, 1); // Hapus item dari portofolio
+                    displayPortfolio(); // Perbarui tampilan portofolio
+                    drawChart(); // Perbarui pie chart
+                });
             }
         });
 
@@ -86,6 +133,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Store portfolio in localStorage
         localStorage.setItem('portfolio', JSON.stringify(portfolio));
+
+        // Draw the pie chart
+        google.charts.setOnLoadCallback(drawChart);
     }
 
     coinSearchInput.addEventListener('input', () => {
@@ -105,9 +155,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         const coinAmount = parseFloat(coinAmountInput.value.trim());
 
         if (selectedCoin && !isNaN(coinAmount)) {
-            portfolio.push({ coin: selectedCoin, amount: coinAmount });
-            displayPortfolio();
+            if (editingIndex !== -1) {
+                // Jika sedang dalam mode edit, perbarui jumlah koin dalam portofolio pada indeks yang sesuai
+                portfolio[editingIndex].amount = coinAmount;
+            } else {
+                // Jika tidak, tambahkan item baru ke portofolio
+                portfolio.push({ coin: selectedCoin, amount: coinAmount });
+            }
+            displayPortfolio(); // Perbarui tampilan portofolio
             $('#addCoinModal').modal('hide');
+            editingIndex = -1; // Reset indeks baris yang sedang diedit
+            drawChart(); // Perbarui pie chart
         }
     });
 
